@@ -16,8 +16,6 @@ import java.util.List;
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
 public class EmailController {
-
-    // @Autowired RestTemplate restTemplate; // for the ai model
     @Autowired private EmailService emailService;
     @Autowired private EmailClassificationService emailClassificationService;
     @Autowired private StorageService storageService;
@@ -52,18 +50,19 @@ public class EmailController {
     }
 
     @PostMapping("/emails")
-    public ResponseEntity<?> sendEmail(@RequestBody Email email) {
+    public String sendEmail(@RequestBody Email email) {
         try {
+            System.out.println(email.toString());
             if(email.getPathToAttachment() == null) {
                 emailService.sendSimpleMessage(email);
             }else {
                 emailService.sendMessageWithAttachment(email);
             }
             emailRepository.save(email);
-            emailService.sendValidationEmail(email.getToEmail());
-            return ResponseEntity.ok("Email saved and sent successfully to " + email.getToEmail());
+            // emailService.sendValidationEmail(email.getToEmail());
+            return "Email saved and sent successfully to " + email.getToEmail();
         } catch (MailException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error sending email");
+            return "Error sending email";
         }
     }
 
