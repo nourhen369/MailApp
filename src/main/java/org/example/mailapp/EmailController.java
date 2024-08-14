@@ -5,11 +5,14 @@ import org.example.mailapp.entities.*;
 import org.example.mailapp.repositories.reception.*;
 import org.example.mailapp.repositories.*;
 import org.example.mailapp.services.*;
+import org.example.mailapp.spam.SpamRequest;
+import org.example.mailapp.spam.SpamResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -19,6 +22,8 @@ public class EmailController {
     @Autowired private EmailService emailService;
     @Autowired private EmailClassificationService emailClassificationService;
     @Autowired private StorageService storageService;
+
+    private final RestTemplate restTemplate = new RestTemplate();
 
     @Autowired EmailRepository emailRepository;
     @Autowired InboxRepository inboxRepository;
@@ -83,7 +88,7 @@ public class EmailController {
                 // emailClassificationService.fetchEmails();
     }
 
-    @GetMapping("/inbox/type/{type}")
+    @GetMapping("inbox/type/{type}")
     public List<InboxMessage> getInboxByType(@PathVariable String type){
         return inboxRepository.findByType(type);
     }
@@ -121,16 +126,13 @@ public class EmailController {
                 .body(upload);
     }*/
 
-    // ai model
-    @PostMapping("/generate")
-    public String getOpenaiResponse(@RequestBody String prompt) {
-        /*try {
-            ChatRequest chatRequest = new ChatRequest("gpt-3.5-turbo", prompt);
-            ChatResponse response = restTemplate.postForObject(
-                    "https://api.openai.com/v1/chat/completions", chatRequest, ChatResponse.class);
-            return response.getChoices().get(0).getMessage().getContent();
-        } catch (Exception e) {*/
-            return "Sorry, something went wrong while generating the email content.";
-        //}
+// spam detection
+    @PostMapping("/check-spam")
+    public ResponseEntity<?> checkSpam(@RequestBody Email email) {
+        String url = "http://localhost:5000/detect-spam";
+        SpamRequest spamRequest = new SpamRequest(email.getBody());
+        ResponseEntity<SpamResponse> response = restTemplate.postForEntity(url, spamRequest, SpamResponse.class);
+        boolean isSpam = response.getBody().isSpam();
+        return ResponseEntity.ok(isSpam ? "Email is spam" : "Email is not spam");
     }
 }
