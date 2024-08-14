@@ -23,8 +23,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmailService {
 
-    // @Value("${spring.mail.username}")
-    private String username = "nourhenekhechine@gmail.com";
+    @Value("${spring.mail.username}")
+    private String username;
 
     @Autowired private JavaMailSender emailSender;
     @Autowired private EmailRepository emailRepository;
