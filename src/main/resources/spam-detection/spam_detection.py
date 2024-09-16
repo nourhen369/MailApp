@@ -8,11 +8,11 @@ from nltk.stem.porter import PorterStemmer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_extraction.text import CountVectorizer
 
-# Initialize Flask app
+# Initialize Flask app 
 app = Flask(__name__)
 
 # Load data and model
-df = pd.read_csv('src/main/resources/spam-detection/spam_ham_dataset.csv')
+df = pd.read_csv('./spam_ham_dataset.csv')
 df['text'] = df['text'].apply(lambda x: x.replace('\r\n', ' '))
 
 stemmer = PorterStemmer()

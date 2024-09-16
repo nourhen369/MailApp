@@ -79,7 +79,7 @@ public class EmailClassificationService {
         try {
             Session session = Session.getInstance(props, null);
             Store store = session.getStore("imaps");
-            store.connect("imap.gmail.com", "nourhenekhechine@gmail.com", "alrobwvyfchnlynu");
+            store.connect("imap.gmail.com", "nourhenekhechine@gmail.com", "dnfpbedrfgymzjyo");
             return store;
         } catch (Exception e) {
             e.printStackTrace();

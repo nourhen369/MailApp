@@ -85,7 +85,7 @@ public class EmailController {
     @GetMapping("/inbox")
     public List<InboxMessage> getInbox() {
         return (List<InboxMessage>) inboxRepository.findAll();
-                // emailClassificationService.fetchEmails();
+              // emailClassificationService.fetchEmails();
     }
 
     @GetMapping("inbox/type/{type}")
@@ -117,22 +117,5 @@ public class EmailController {
     public ReceivedAttachment getReceivedAttachmentByFilename(@PathVariable String filename){
         byte[] content = storageService.downloadReceivedFile(filename);
         return new ReceivedAttachment(filename, content);
-    }
-
-    /*@PostMapping("/uploadReceivedAttachment")
-    public ResponseEntity<?> uploadFile(@RequestParam("file")MultipartFile file) throws IOException {
-        String upload = storageService.uploadFile(file);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(upload);
-    }*/
-
-// spam detection
-    @PostMapping("/check-spam")
-    public ResponseEntity<?> checkSpam(@RequestBody Email email) {
-        String url = "http://localhost:5000/detect-spam";
-        SpamRequest spamRequest = new SpamRequest(email.getBody());
-        ResponseEntity<SpamResponse> response = restTemplate.postForEntity(url, spamRequest, SpamResponse.class);
-        boolean isSpam = response.getBody().isSpam();
-        return ResponseEntity.ok(isSpam ? "Email is spam" : "Email is not spam");
     }
 }
